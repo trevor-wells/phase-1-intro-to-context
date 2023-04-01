@@ -39,17 +39,21 @@ function createTimeOutEvent(employeeRecord , dateStamp){
 }
 
 function hoursWorkedOnDate(employeeRecord , date){
-    return hoursWorked
+    const inEvent = employeeRecord.timeInEvents.find(event => event.date === date)
+    const outEvent = employeeRecord.timeOutEvents.find(event => event.date === date)
+    return (outEvent.hour - inEvent.hour) / 100
 }
 
 function wagesEarnedOnDate(employeeRecord , date){
-    return payOwed
+    return hoursWorkedOnDate(employeeRecord , date) * employeeRecord.payPerHour
 }
 
 function allWagesFor(employeeRecord){
-    return totalPayOwed
+    const eligibleDates = employeeRecord.timeInEvents.map(e => e.date)
+    const totalWage = eligibleDates.reduce((wage , date) => wage + wagesEarnedOnDate(employeeRecord , date) , 0)
+    return totalWage
 }
 
-function calculatePayRoll(employeeRecords){
-    return sumOfPay
+function calculatePayroll(employeeRecords){
+    return employeeRecords.reduce((wage , employeeRecord) => wage + allWagesFor(employeeRecord) , 0)
 }
